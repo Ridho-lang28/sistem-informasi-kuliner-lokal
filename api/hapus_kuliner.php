@@ -1,9 +1,13 @@
 <?php
-$conn = mysqli_connect("localhost","root","","db_kuliner");
+include "koneksi.php";
 
-$id = $_GET['id']; 
-// ambil id
+if(!isset($_GET['id'])){
+  die("ID tidak ditemukan");
+}
 
-mysqli_query($conn,"DELETE FROM kuliner WHERE id=$id"); 
-// hapus data berdasarkan id
+$id = intval($_GET['id']);
+
+mysqli_query($conn,"DELETE FROM kuliner WHERE id=$id");
+
+echo "OK";
 ?>
