@@ -16,9 +16,9 @@
     <a class="navbar-brand fw-bold">🍜 Kuliner Lokal</a>
 
     <div class="ms-auto">
-      <a href="#" class="btn btn-light btn-sm me-2" onclick="showPage('home')">Beranda</a>
-      <a href="#" class="btn btn-light btn-sm me-2" onclick="showPage('daftar')">Kuliner</a>
-      <a href="#" class="btn btn-success btn-sm" onclick="showPage('tambah')">Tambah</a>
+      <a href="javascript:void(0)" class="btn btn-light btn-sm me-2" onclick="showPage('home')">Beranda</a>
+      <a href="javascript:void(0)" class="btn btn-light btn-sm me-2" onclick="showPage('daftar')">Kuliner</a>
+      <a href="javascript:void(0)" class="btn btn-success btn-sm" onclick="showPage('tambah')">Tambah</a>
     </div>
   </div>
 </nav>
@@ -60,18 +60,25 @@ function showPage(page){
       </div>
     `;
 
-    attachForm();
+    if(typeof attachForm === "function"){
+      attachForm();
+    }
   }
 
   // ================= DAFTAR =================
   else if(page === "daftar"){
     content.innerHTML = `<div id="kulinerContainer" class="row"></div>`;
-    loadKuliner();
+
+    if(typeof loadKuliner === "function"){
+      loadKuliner();
+    }
   }
 }
 
 // default load
-showPage("home");
+document.addEventListener("DOMContentLoaded", function(){
+  showPage("home");
+});
 </script>
 
 </body>
