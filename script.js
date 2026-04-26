@@ -1,103 +1,95 @@
-function toggleMenu(){
-  let menu = document.getElementById("menu");
-  menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
-}
-
+// ================= LOAD SAAT HALAMAN SIAP =================
 document.addEventListener("DOMContentLoaded", function(){
-
-  loadKuliner();
-  loadAdmin(); // jalan saat halaman selesai dimuat
-
-  let form = document.getElementById("formKuliner");
-
-  if(form){
-    form.addEventListener("submit", function(e){
-      e.preventDefault();
-
-      let formData = new FormData();
-      formData.append("nama_makanan", document.getElementById("nama_makanan").value);
-      formData.append("kategori", document.getElementById("kategori").value);
-      formData.append("lokasi", document.getElementById("lokasi").value);
-      formData.append("harga", document.getElementById("harga").value);
-      formData.append("deskripsi", document.getElementById("deskripsi").value);
-      formData.append("rating", document.getElementById("rating").value);
-
-      fetch("/api/simpan_kuliner.php", { // 🔥 sudah pakai /api
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(() => {
-        alert("Data berhasil disimpan!");
-        form.reset();
-        loadKuliner();
-        loadAdmin();
-      });
-    });
-  }
+  console.log("App Ready");
 });
 
-// tampilkan kuliner
+// ================= FORM HANDLER =================
+function attachForm(){
+  let form = document.getElementById("formKuliner");
+
+  if(!form) return;
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append("nama_makanan", document.getElementById("nama_makanan").value);
+    formData.append("kategori", document.getElementById("kategori").value);
+    formData.append("lokasi", document.getElementById("lokasi").value);
+    formData.append("harga", document.getElementById("harga").value);
+    formData.append("deskripsi", document.getElementById("deskripsi").value);
+    formData.append("rating", document.getElementById("rating").value);
+
+    fetch("/api/simpan_kuliner.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.text())
+    .then(res => {
+      console.log(res);
+      alert("✅ Data berhasil disimpan!");
+      showPage("daftar");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("❌ Gagal simpan data");
+    });
+  });
+}
+
+// ================= TAMPILKAN DATA =================
 function loadKuliner(){
-  fetch("/api/ambil_kuliner.php") // 🔥 sudah pakai /api
+  let container = document.getElementById("kulinerContainer");
+
+  if(!container) return;
+
+  container.innerHTML = "<p>Loading...</p>";
+
+  fetch("/api/ambil_kuliner.php")
   .then(res => res.json())
   .then(data => {
 
-    let container = document.getElementById("kulinerContainer");
+    container.innerHTML = "";
 
-    if(container){
-      container.innerHTML = "";
+    if(data.length === 0){
+      container.innerHTML = "<p>Tidak ada data</p>";
+      return;
+    }
 
-      data.forEach(k => {
-        container.innerHTML += `
-          <div class="laporan-card">
-            <h3>${k.nama_makanan}</h3>
-            <p>Kategori: ${k.kategori}</p>
-            <p>Lokasi: ${k.lokasi}</p>
-            <p>Harga: Rp ${k.harga}</p>
+    data.forEach(k => {
+      container.innerHTML += `
+        <div class="col-md-4 mb-3">
+          <div class="card p-3 shadow-sm">
+            <h5>${k.nama_makanan}</h5>
+            <p><b>Kategori:</b> ${k.kategori}</p>
+            <p><b>Lokasi:</b> ${k.lokasi}</p>
+            <p><b>Harga:</b> Rp ${k.harga}</p>
             <p>${k.deskripsi}</p>
-            <p>Rating: ⭐ ${k.rating}</p>
+            <p>⭐ ${k.rating}</p>
+            <button class="btn btn-danger btn-sm" onclick="hapus(${k.id})">Hapus</button>
           </div>
-        `;
-      });
-    }
+        </div>
+      `;
+    });
+
+  })
+  .catch(err => {
+    console.error(err);
+    container.innerHTML = "<p>❌ Gagal load data</p>";
   });
 }
 
-// admin
-function loadAdmin(){
-  fetch("/api/ambil_kuliner.php") // 🔥 sudah pakai /api
-  .then(res => res.json())
-  .then(data => {
-
-    let table = document.getElementById("adminTable");
-
-    if(table){
-      table.innerHTML = "";
-
-      data.forEach(k => {
-        table.innerHTML += `
-          <tr>
-            <td>${k.nama_makanan}</td>
-            <td>${k.kategori}</td>
-            <td>${k.lokasi}</td>
-            <td>${k.harga}</td>
-            <td>${k.rating}</td>
-            <td>
-              <button onclick="hapus(${k.id})">🗑</button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-  });
-}
-
-// hapus
+// ================= HAPUS DATA =================
 function hapus(id){
-  fetch("/api/hapus_kuliner.php?id=" + id) // 🔥 sudah pakai /api
+  if(!confirm("Yakin hapus data?")) return;
+
+  fetch("/api/hapus_kuliner.php?id=" + id)
   .then(() => {
+    alert("🗑 Data dihapus");
     loadKuliner();
-    loadAdmin();
+  })
+  .catch(err => {
+    console.error(err);
+    alert("❌ Gagal hapus");
   });
 }
