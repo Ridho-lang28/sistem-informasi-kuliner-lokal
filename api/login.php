@@ -16,7 +16,8 @@ if(isset($_POST['login'])){
     $_SESSION['email'] = $user['email'];
     $_SESSION['role'] = $user['role'];
     // simpan session untuk menandakan user sudah login dan menyimpan info email + role
-    header("Location: index.php");
+    header("Location: /");
+    exit;
   } else {
     echo "<script>alert('Login gagal');</script>";
   }
