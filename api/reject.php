@@ -1,14 +1,17 @@
 <?php
 include "koneksi.php";
 
-if(!isset($_GET['id'])){
-  die("ID tidak ditemukan");
-}
+$nama = $_POST['nama_makanan'];
+$kategori = $_POST['kategori'];
+$lokasi = $_POST['lokasi'];
+$harga = $_POST['harga'];
+$deskripsi = $_POST['deskripsi'];
+$rating = $_POST['rating'];
 
-$id = intval($_GET['id']);
+mysqli_query($conn,"INSERT INTO kuliner 
+(nama_makanan,kategori,lokasi,harga,deskripsi,rating,status)
+VALUES 
+('$nama','$kategori','$lokasi','$harga','$deskripsi','$rating','pending')");
 
-mysqli_query($conn,"UPDATE kuliner SET status='rejected' WHERE id=$id");
-
-header("Location: /");
-exit;
+echo "OK";
 ?>
