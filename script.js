@@ -4,9 +4,9 @@ function toggleMenu(){
 }
 
 document.addEventListener("DOMContentLoaded", function(){
+
   loadKuliner();
-  loadAdmin();
-  // jalan saat halaman selesai dimuat, untuk load data kuliner dan admin
+  loadAdmin(); // jalan saat halaman selesai dimuat
 
   let form = document.getElementById("formKuliner");
 
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function(){
       formData.append("deskripsi", document.getElementById("deskripsi").value);
       formData.append("rating", document.getElementById("rating").value);
 
-      fetch("simpan_kuliner.php", {
+      fetch("/api/simpan_kuliner.php", { // 🔥 sudah pakai /api
         method: "POST",
         body: formData
       })
@@ -39,10 +39,9 @@ document.addEventListener("DOMContentLoaded", function(){
 
 // tampilkan kuliner
 function loadKuliner(){
-  fetch("ambil_kuliner.php")
+  fetch("/api/ambil_kuliner.php") // 🔥 sudah pakai /api
   .then(res => res.json())
   .then(data => {
-    // ambil data kuliner dari server dan tampilkan di halaman utama
 
     let container = document.getElementById("kulinerContainer");
 
@@ -67,10 +66,9 @@ function loadKuliner(){
 
 // admin
 function loadAdmin(){
-  fetch("ambil_kuliner.php")
+  fetch("/api/ambil_kuliner.php") // 🔥 sudah pakai /api
   .then(res => res.json())
   .then(data => {
-    // ambil data kuliner dari server dan tampilkan di halaman admin
 
     let table = document.getElementById("adminTable");
 
@@ -97,10 +95,9 @@ function loadAdmin(){
 
 // hapus
 function hapus(id){
-  fetch("hapus_kuliner.php?id=" + id)
+  fetch("/api/hapus_kuliner.php?id=" + id) // 🔥 sudah pakai /api
   .then(() => {
     loadKuliner();
     loadAdmin();
   });
 }
-// funsi hapus kuliner dengan mengirim id ke server, lalu reload data kuliner dan admin 
