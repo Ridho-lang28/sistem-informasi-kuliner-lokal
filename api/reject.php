@@ -1,11 +1,14 @@
 <?php
 include "koneksi.php";
 
-$id = $_GET['id'];
-// ambil id
+if(!isset($_GET['id'])){
+  die("ID tidak ditemukan");
+}
 
-mysqli_query($conn,"UPDATE kuliner SET status='rejected' WHERE id='$id'"); 
-// ubah status jadi ditolak
+$id = intval($_GET['id']);
 
-header("Location: index.php?page=admin"); 
-// kembali ke admin
+mysqli_query($conn,"UPDATE kuliner SET status='rejected' WHERE id=$id");
+
+header("Location: /");
+exit;
+?>
