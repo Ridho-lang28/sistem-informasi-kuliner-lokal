@@ -93,3 +93,13 @@ function hapus(id){
     alert("❌ Gagal hapus");
   });
 }
+
+function getPageFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  return params.get("page") || "home";
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  const page = getPageFromURL();
+  showPage(page);
+});
