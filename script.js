@@ -1,9 +1,18 @@
-// ================= LOAD SAAT HALAMAN SIAP =================
+// ================= LOAD =================
 document.addEventListener("DOMContentLoaded", function(){
   console.log("App Ready");
+
+  const page = getPageFromURL();
+  showPage(page);
 });
 
-// ================= FORM HANDLER =================
+// ================= URL ROUTING =================
+function getPageFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  return params.get("page") || "home";
+}
+
+// ================= FORM =================
 function attachForm(){
   let form = document.getElementById("formKuliner");
 
@@ -24,9 +33,11 @@ function attachForm(){
       method: "POST",
       body: formData
     })
-    .then(res => res.text())
     .then(res => {
-      console.log(res);
+      if(!res.ok) throw new Error("Server error");
+      return res.text();
+    })
+    .then(() => {
       alert("✅ Data berhasil disimpan!");
       showPage("daftar");
     })
@@ -37,7 +48,7 @@ function attachForm(){
   });
 }
 
-// ================= TAMPILKAN DATA =================
+// ================= LOAD DATA =================
 function loadKuliner(){
   let container = document.getElementById("kulinerContainer");
 
@@ -46,12 +57,15 @@ function loadKuliner(){
   container.innerHTML = "<p>Loading...</p>";
 
   fetch("/api/ambil_kuliner.php")
-  .then(res => res.json())
+  .then(res => {
+    if(!res.ok) throw new Error("Server error");
+    return res.json();
+  })
   .then(data => {
 
     container.innerHTML = "";
 
-    if(data.length === 0){
+    if(!Array.isArray(data) || data.length === 0){
       container.innerHTML = "<p>Tidak ada data</p>";
       return;
     }
@@ -75,16 +89,17 @@ function loadKuliner(){
   })
   .catch(err => {
     console.error(err);
-    container.innerHTML = "<p>❌ Gagal load data</p>";
+    container.innerHTML = "<p>❌ Gagal load data (cek API)</p>";
   });
 }
 
-// ================= HAPUS DATA =================
+// ================= DELETE =================
 function hapus(id){
   if(!confirm("Yakin hapus data?")) return;
 
   fetch("/api/hapus_kuliner.php?id=" + id)
-  .then(() => {
+  .then(res => {
+    if(!res.ok) throw new Error("Gagal hapus");
     alert("🗑 Data dihapus");
     loadKuliner();
   })
@@ -93,13 +108,3 @@ function hapus(id){
     alert("❌ Gagal hapus");
   });
 }
-
-function getPageFromURL(){
-  const params = new URLSearchParams(window.location.search);
-  return params.get("page") || "home";
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-  const page = getPageFromURL();
-  showPage(page);
-});
