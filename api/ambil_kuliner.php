@@ -1,17 +1,14 @@
 <?php
-$conn = mysqli_connect("localhost","root","","db_kuliner"); 
-// koneksi ke database
+header('Content-Type: application/json');
+include "koneksi.php";
 
-$data = mysqli_query($conn,"SELECT * FROM kuliner"); 
-// ambil semua data dari tabel kuliner
+$data = mysqli_query($conn,"SELECT * FROM kuliner");
 
 $result = [];
 
 while($row = mysqli_fetch_assoc($data)){
-  $result[] = $row; 
-  // setiap baris dimasukin ke array
+  $result[] = $row;
 }
 
-echo json_encode($result); 
-// kirim data dalam bentuk JSON (dipakai JS / frontend)
+echo json_encode($result);
 ?>
