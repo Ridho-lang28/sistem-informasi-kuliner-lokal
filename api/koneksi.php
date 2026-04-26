@@ -7,9 +7,13 @@ $port = 4000;
 
 $conn = mysqli_init();
 
-// WAJIB untuk TiDB (SSL)
+// WAJIB: disable SSL verify (biar jalan di Vercel)
+mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+
+// WAJIB: aktifkan SSL
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 
+// connect
 mysqli_real_connect(
     $conn,
     $host,
@@ -21,9 +25,11 @@ mysqli_real_connect(
     MYSQLI_CLIENT_SSL
 );
 
-if (!$conn) {
+// cek error
+if (mysqli_connect_errno()) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
 
+// charset
 mysqli_set_charset($conn, "utf8");
 ?>
