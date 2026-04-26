@@ -1,17 +1,15 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "db_kuliner";
+$host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
+$port = 4000;
+$user = "3KTgRBgr6VCylbp.root";
+$pass = "ns5fTU2zrgVgdkvg";
+$db   = "KulinerLokal";
 
-$conn = mysqli_connect($host, $user, $pass, $db);
-// koneksi ke database
+$conn = mysqli_connect($host, $user, $pass, $db, $port);
 
 if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
-// cek kalau koneksi gagal
 
 mysqli_set_charset($conn, "utf8");
-// biar support karakter utf8
 ?>
