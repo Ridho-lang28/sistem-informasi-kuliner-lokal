@@ -2,7 +2,7 @@
 $host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
 $user = "3KTgRBgr6VCy1bp.root"; // pastikan ini PERSIS dari TiDB
 $pass = "vRQ5NOTe19BUt5vk";
-$db   = "KulinerLokal";
+$db   = "kuliner_app";
 $port = 4000;
 
 $conn = mysqli_init();
