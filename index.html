@@ -1,7 +1,10 @@
 <script>
 function showPage(page){
-let content = document.getElementById("content");
 
+let content=document.getElementById("content");
+
+
+// ================= HOME =================
 if(page==="home"){
 content.innerHTML=`
 <div class="p-5 text-center bg-white shadow rounded">
@@ -11,56 +14,137 @@ content.innerHTML=`
 `;
 }
 
+
+// ================= LOGIN =================
 else if(page==="login"){
 content.innerHTML=`
 <div class="card p-4 col-md-4 mx-auto shadow">
 <h3 class="text-center mb-3">Login</h3>
-<input id="email" class="form-control mb-2" placeholder="Email">
-<input id="password" type="password" class="form-control mb-3" placeholder="Password">
-<button class="btn btn-dark w-100" onclick="login()">Login</button>
+
+<input
+id="email"
+class="form-control mb-2"
+placeholder="Email">
+
+<input
+id="password"
+type="password"
+class="form-control mb-3"
+placeholder="Password">
+
+<button
+class="btn btn-dark w-100"
+onclick="login()">
+Login
+</button>
+
 </div>
 `;
 }
 
+
+// ================= REGISTER =================
 else if(page==="register"){
 content.innerHTML=`
 <div class="card p-4 col-md-4 mx-auto shadow">
-<h3 class="text-center mb-3">Register</h3>
-<input id="email" class="form-control mb-2" placeholder="Email">
-<input id="password" type="password" class="form-control mb-3" placeholder="Password">
-<button class="btn btn-success w-100" onclick="register()">Daftar</button>
+<h3 class="text-center mb-3">
+Register
+</h3>
+
+<input
+id="email"
+class="form-control mb-2"
+placeholder="Email">
+
+<input
+id="password"
+type="password"
+class="form-control mb-3"
+placeholder="Password">
+
+<button
+class="btn btn-success w-100"
+onclick="register()">
+Daftar
+</button>
+
 </div>
 `;
 }
 
+
+
+// ================= TAMBAH =================
 else if(page==="tambah"){
 content.innerHTML=`
 <div class="card shadow p-4">
 <h3>Tambah Kuliner</h3>
 
 <form id="formKuliner">
-<input id="nama_makanan" class="form-control mb-2" placeholder="Nama Makanan">
-<input id="kategori" class="form-control mb-2" placeholder="Kategori">
-<input id="lokasi" class="form-control mb-2" placeholder="Lokasi">
-<input id="harga" class="form-control mb-2" placeholder="Harga">
-<textarea id="deskripsi" class="form-control mb-2"></textarea>
-<input id="rating" class="form-control mb-3" placeholder="Rating">
+
+<input
+id="nama_makanan"
+class="form-control mb-2"
+placeholder="Nama Makanan">
+
+<input
+id="kategori"
+class="form-control mb-2"
+placeholder="Kategori">
+
+<input
+id="lokasi"
+class="form-control mb-2"
+placeholder="Lokasi">
+
+<input
+id="harga"
+class="form-control mb-2"
+placeholder="Harga">
+
+<textarea
+id="deskripsi"
+class="form-control mb-2"
+placeholder="Deskripsi"></textarea>
+
+<input
+id="rating"
+class="form-control mb-3"
+placeholder="Rating">
+
 <button class="btn btn-success w-100">
 Simpan
 </button>
-</form>
 
+</form>
 </div>
 `;
+
 attachForm();
 }
 
+
+
+// ================= DAFTAR =================
 else if(page==="daftar"){
-content.innerHTML=`<div id="kulinerContainer" class="row"></div>`;
+content.innerHTML=`
+<div id="kulinerContainer" class="row"></div>
+`;
+
 loadKuliner();
 }
 
+
+
+// ================= DASHBOARD =================
 else if(page==="dashboard"){
+
+if(!isLogin()){
+alert("Login dulu");
+showPage("login");
+return;
+}
+
 content.innerHTML=`
 
 <h2 class="mb-4 fw-bold">
@@ -72,23 +156,25 @@ content.innerHTML=`
 <div class="col-md-4">
 <div class="card shadow text-center p-4">
 <h5>🍽 Total Kuliner</h5>
-<h2 id="totalKuliner">25</h2>
+<h2 id="totalKuliner">0</h2>
 </div>
 </div>
+
 
 <div class="col-md-4">
 <div class="card shadow text-center p-4">
 <h5>💸 Kuliner Murah</h5>
-<h2 id="murah">14</h2>
+<h2 id="murah">0</h2>
 <small>< 20rb</small>
 </div>
 </div>
 
+
 <div class="col-md-4">
 <div class="card shadow text-center p-4">
 <h5>💎 Kuliner Mahal</h5>
-<h2 id="mahal">11</h2>
-<small>>=20rb</small>
+<h2 id="mahal">0</h2>
+<small>>= 20rb</small>
 </div>
 </div>
 
@@ -96,7 +182,10 @@ content.innerHTML=`
 
 
 <div class="card shadow p-4">
-<h4>Top 10 Daerah Dengan Pengeluaran Tertinggi</h4>
+
+<h4 class="mb-3">
+Top 10 Daerah Dengan Pengeluaran Tertinggi
+</h4>
 
 <p class="text-muted">
 Data pengeluaran makanan dari API BPS
@@ -111,32 +200,56 @@ Sumber: BPS API
 </div>
 
 `;
+
 loadChart();
+
 }
 
 
+
+// ================= ADMIN =================
 else if(page==="admin"){
 
 if(getRole()!=="admin"){
-alert("Akses ditolak");
+alert("Akses ditolak!");
 showPage("home");
 return;
 }
 
 content.innerHTML=`
+
 <div class="card shadow p-4">
-<h3>🛠 Panel Admin</h3>
+
+<h3 class="mb-4">
+🛠 Panel Admin
+</h3>
+
+<p class="text-muted">
+Approve / Reject usulan kuliner publik
+</p>
+
 <div id="adminList"></div>
+
 </div>
+
 `;
 
 loadAdmin();
-}
 
 }
 
-document.addEventListener("DOMContentLoaded",function(){
+}
+
+
+// ================= START =================
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
 renderMenu();
 showPage("home");
-});
+
+}
+);
+
 </script>
