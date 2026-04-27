@@ -3,19 +3,20 @@ document.addEventListener("DOMContentLoaded", function(){
 console.log("App Ready");
 renderMenu();
 
-const page=getPageFromURL();
+const page = getPageFromURL();
 showPage(page);
 });
 
 // ================= URL =================
 function getPageFromURL(){
-const params=new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 return params.get("page") || "home";
 }
 
+
 // ================= AUTH =================
 function isLogin(){
-return localStorage.getItem("user")!==null;
+return localStorage.getItem("user") !== null;
 }
 
 function getUser(){
@@ -34,6 +35,7 @@ renderMenu();
 showPage("home");
 }
 
+
 // ================= MENU =================
 function renderMenu(){
 
@@ -48,7 +50,8 @@ let html=`
 
 if(role){
 html+=`
-<li><a class="dropdown-item" onclick="showPage('dashboard')">
+<li><a class="dropdown-item"
+onclick="showPage('dashboard')">
 Dashboard
 </a></li>
 `;
@@ -64,6 +67,7 @@ Panel Admin
 }
 
 if(isLogin()){
+
 html+=`
 <li>
 <a class="dropdown-item text-danger"
@@ -72,26 +76,47 @@ Logout
 </a>
 </li>
 `;
-}else{
-html+=`
-<li><a class="dropdown-item"
-onclick="showPage('login')">Login</a></li>
 
-<li><a class="dropdown-item"
-onclick="showPage('register')">Daftar</a></li>
+}else{
+
+html+=`
+<li>
+<a class="dropdown-item"
+onclick="showPage('login')">
+Login
+</a>
+</li>
+
+<li>
+<a class="dropdown-item"
+onclick="showPage('register')">
+Daftar
+</a>
+</li>
 `;
+
 }
 
 menu.innerHTML=html;
 
 }
 
+
+
 // ================= LOGIN =================
 function login(){
 
 let formData=new FormData();
-formData.append("email",email.value);
-formData.append("password",password.value);
+
+formData.append(
+"email",
+document.getElementById("email").value
+);
+
+formData.append(
+"password",
+document.getElementById("password").value
+);
 
 fetch("api/login.php",{
 method:"POST",
@@ -101,12 +126,15 @@ body:formData
 .then(res=>{
 
 if(res.status==="success"){
-localStorage.setItem("user",JSON.stringify(res));
+localStorage.setItem(
+"user",
+JSON.stringify(res)
+);
+
 alert("Login berhasil");
 renderMenu();
 showPage("home");
-}
-else{
+}else{
 alert("Login gagal");
 }
 
@@ -114,13 +142,22 @@ alert("Login gagal");
 
 }
 
+
+
 // ================= REGISTER =================
 function register(){
 
 let formData=new FormData();
 
-formData.append("email",email.value);
-formData.append("password",password.value);
+formData.append(
+"email",
+document.getElementById("email").value
+);
+
+formData.append(
+"password",
+document.getElementById("password").value
+);
 
 fetch("api/register.php",{
 method:"POST",
@@ -132,14 +169,15 @@ body:formData
 if(res.status==="success"){
 alert("Berhasil daftar");
 showPage("login");
-}
-else{
+}else{
 alert(res.msg);
 }
 
 });
 
 }
+
+
 
 // ================= FORM TAMBAH =================
 function attachForm(){
@@ -160,27 +198,50 @@ e.preventDefault();
 
 let fd=new FormData();
 
-fd.append("nama_makanan",nama_makanan.value);
-fd.append("kategori",kategori.value);
-fd.append("lokasi",lokasi.value);
-fd.append("harga",harga.value);
-fd.append("deskripsi",deskripsi.value);
-fd.append("rating",rating.value);
+fd.append(
+"nama_makanan",
+document.getElementById("nama_makanan").value
+);
+
+fd.append(
+"kategori",
+document.getElementById("kategori").value
+);
+
+fd.append(
+"lokasi",
+document.getElementById("lokasi").value
+);
+
+fd.append(
+"harga",
+document.getElementById("harga").value
+);
+
+fd.append(
+"deskripsi",
+document.getElementById("deskripsi").value
+);
+
+fd.append(
+"rating",
+document.getElementById("rating").value
+);
 
 fetch("api/simpan_kuliner.php",{
 method:"POST",
 body:fd
 })
 .then(()=>{
-
 alert("Menunggu approval admin");
 showPage("home");
-
 });
 
 });
 
 }
+
+
 
 // ================= LOAD KULINER =================
 function loadKuliner(){
@@ -213,7 +274,9 @@ box.innerHTML+=`
 
 <p>${k.lokasi}</p>
 
-<p>Rp ${parseInt(k.harga).toLocaleString("id-ID")}</p>
+<p>
+Rp ${parseInt(k.harga).toLocaleString("id-ID")}
+</p>
 
 <p>⭐ ${k.rating}</p>
 
@@ -227,7 +290,9 @@ box.innerHTML+=`
 
 }
 
-// ================= ADMIN =================
+
+
+// ================= ADMIN PANEL =================
 function loadAdmin(){
 
 fetch("api/ambil_pending.php")
@@ -270,49 +335,79 @@ Reject
 
 });
 
-document.getElementById("adminList").innerHTML=html;
+document.getElementById(
+"adminList"
+).innerHTML=html;
 
 });
 
 }
 
 function approve(id){
+
 fetch("api/approve.php?id="+id)
 .then(()=>{
 alert("Approved");
 loadAdmin();
 });
+
 }
 
 function reject(id){
+
 fetch("api/reject.php?id="+id)
 .then(()=>{
 alert("Rejected");
 loadAdmin();
 });
+
 }
 
 
-// ================= DASHBOARD =================
+
+// ================= DASHBOARD BPS =================
 function loadChart(){
 
-fetch("api/ambil_kuliner.php")
+fetch("api/data_pengeluaran.php")
 .then(r=>r.json())
-.then(data=>{
+.then(result=>{
 
-let labels=data.map(k=>k.nama_makanan);
-let harga=data.map(k=>parseInt(k.harga));
+console.log(result);
+
+// struktur BPS
+let raw=result.data[1];
+
+let labels=[];
+let values=[];
 
 
-// kartu statistik
-document.getElementById("totalKuliner").innerText=
-data.length;
+// ambil 10 teratas
+for(let i=0;i<10;i++){
 
-document.getElementById("murah").innerText=
-data.filter(k=>parseInt(k.harga)<20000).length;
+labels.push(
+raw[i].label
+);
 
-document.getElementById("mahal").innerText=
-data.filter(k=>parseInt(k.harga)>=20000).length;
+values.push(
+parseFloat(raw[i].value)
+);
+
+}
+
+
+// statistik kartu
+document.getElementById(
+"totalKuliner"
+).innerText=10;
+
+document.getElementById(
+"murah"
+).innerText="BPS";
+
+document.getElementById(
+"mahal"
+).innerText="API";
+
 
 
 // chart
@@ -324,32 +419,37 @@ type:"bar",
 data:{
 labels:labels,
 
-datasets:[{
-label:"Harga Kuliner",
-data:harga
-}]
+datasets:[
+{
+label:"Pengeluaran",
+data:values
+}
+]
 },
 
 options:{
-indexAxis:"y",
+responsive:true,
 
 plugins:{
 legend:{
-display:false
+display:true
+}
 },
-tooltip:{
-callbacks:{
-label:function(context){
-return "Rp "+
-context.raw.toLocaleString("id-ID");
+
+scales:{
+y:{
+beginAtZero:true
 }
 }
-}
-}
+
 }
 
 });
 
+})
+.catch(err=>{
+console.error(err);
+alert("Gagal ambil data BPS");
 });
 
 }
