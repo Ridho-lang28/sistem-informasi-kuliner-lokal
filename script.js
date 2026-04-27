@@ -551,22 +551,25 @@ notif("Gagal ambil data","danger");
 // ================= HAPUS =================
 function hapusKuliner(id){
 
-if(!confirm("Hapus data kuliner ini?")){
-return;
-}
+notif("Klik hapus sekali lagi untuk konfirmasi","warning");
 
-fetch(
-"api/hapus_kuliner.php?id="+id
-)
+if(window.confirmDelete===id){
+
+fetch("api/hapus_kuliner.php?id="+id)
 .then(()=>{
-notif(
-"🗑 Data berhasil dihapus",
-"danger"
-);
+notif("🗑 Data berhasil dihapus","danger");
 loadKuliner();
-})
-.catch(()=>{
-notif("Gagal hapus","danger");
+window.confirmDelete=null;
 });
+
+}else{
+
+window.confirmDelete=id;
+
+setTimeout(()=>{
+window.confirmDelete=null;
+},3000);
+
+}
 
 }
