@@ -1,13 +1,16 @@
 <?php
+
 include "koneksi.php";
 
-if(!isset($_GET['id'])){
-  die("ID tidak ditemukan");
-}
+$id=$_GET['id'];
 
-$id = intval($_GET['id']);
+mysqli_query(
+$conn,
+"DELETE FROM kuliner WHERE id='$id'"
+);
 
-mysqli_query($conn,"DELETE FROM kuliner WHERE id=$id");
+echo json_encode([
+"status"=>"success"
+]);
 
-echo "OK";
 ?>
