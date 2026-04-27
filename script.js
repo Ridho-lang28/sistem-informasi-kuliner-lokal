@@ -1,22 +1,26 @@
 // ================= LOAD =================
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded",function(){
+
 console.log("App Ready");
+
 renderMenu();
 
-const page = getPageFromURL();
+const page=getPageFromURL();
 showPage(page);
+
 });
+
 
 // ================= URL =================
 function getPageFromURL(){
-const params = new URLSearchParams(window.location.search);
+const params=new URLSearchParams(window.location.search);
 return params.get("page") || "home";
 }
 
 
 // ================= AUTH =================
 function isLogin(){
-return localStorage.getItem("user") !== null;
+return localStorage.getItem("user")!==null;
 }
 
 function getUser(){
@@ -36,6 +40,7 @@ showPage("home");
 }
 
 
+
 // ================= MENU =================
 function renderMenu(){
 
@@ -50,19 +55,23 @@ let html=`
 
 if(role){
 html+=`
-<li><a class="dropdown-item"
+<li>
+<a class="dropdown-item"
 onclick="showPage('dashboard')">
 Dashboard
-</a></li>
+</a>
+</li>
 `;
 }
 
 if(role==="admin"){
 html+=`
-<li><a class="dropdown-item"
+<li>
+<a class="dropdown-item"
 onclick="showPage('admin')">
 Panel Admin
-</a></li>
+</a>
+</li>
 `;
 }
 
@@ -106,21 +115,21 @@ menu.innerHTML=html;
 // ================= LOGIN =================
 function login(){
 
-let formData=new FormData();
+let fd=new FormData();
 
-formData.append(
+fd.append(
 "email",
 document.getElementById("email").value
 );
 
-formData.append(
+fd.append(
 "password",
 document.getElementById("password").value
 );
 
 fetch("api/login.php",{
 method:"POST",
-body:formData
+body:fd
 })
 .then(r=>r.json())
 .then(res=>{
@@ -132,8 +141,10 @@ JSON.stringify(res)
 );
 
 alert("Login berhasil");
+
 renderMenu();
 showPage("home");
+
 }else{
 alert("Login gagal");
 }
@@ -147,21 +158,21 @@ alert("Login gagal");
 // ================= REGISTER =================
 function register(){
 
-let formData=new FormData();
+let fd=new FormData();
 
-formData.append(
+fd.append(
 "email",
 document.getElementById("email").value
 );
 
-formData.append(
+fd.append(
 "password",
 document.getElementById("password").value
 );
 
 fetch("api/register.php",{
 method:"POST",
-body:formData
+body:fd
 })
 .then(r=>r.json())
 .then(res=>{
@@ -179,7 +190,7 @@ alert(res.msg);
 
 
 
-// ================= FORM TAMBAH =================
+// ================= TAMBAH =================
 function attachForm(){
 
 let form=document.getElementById("formKuliner");
@@ -192,7 +203,9 @@ showPage("login");
 return;
 }
 
-form.addEventListener("submit",function(e){
+form.addEventListener(
+"submit",
+function(e){
 
 e.preventDefault();
 
@@ -228,13 +241,16 @@ fd.append(
 document.getElementById("rating").value
 );
 
+
 fetch("api/simpan_kuliner.php",{
 method:"POST",
 body:fd
 })
 .then(()=>{
+
 alert("Menunggu approval admin");
 showPage("home");
+
 });
 
 });
@@ -267,7 +283,9 @@ data.forEach(k=>{
 
 box.innerHTML+=`
 <div class="col-md-4 mb-3">
+
 <div class="card shadow p-3">
+
 <h5>${k.nama_makanan}</h5>
 
 <p>${k.kategori}</p>
@@ -281,6 +299,7 @@ Rp ${parseInt(k.harga).toLocaleString("id-ID")}
 <p>⭐ ${k.rating}</p>
 
 </div>
+
 </div>
 `;
 
@@ -292,7 +311,7 @@ Rp ${parseInt(k.harga).toLocaleString("id-ID")}
 
 
 
-// ================= ADMIN PANEL =================
+// ================= ADMIN =================
 function loadAdmin(){
 
 fetch("api/ambil_pending.php")
@@ -343,9 +362,12 @@ document.getElementById(
 
 }
 
+
 function approve(id){
 
-fetch("api/approve.php?id="+id)
+fetch(
+"api/approve.php?id="+id
+)
 .then(()=>{
 alert("Approved");
 loadAdmin();
@@ -355,7 +377,9 @@ loadAdmin();
 
 function reject(id){
 
-fetch("api/reject.php?id="+id)
+fetch(
+"api/reject.php?id="+id
+)
 .then(()=>{
 alert("Rejected");
 loadAdmin();
@@ -374,14 +398,11 @@ fetch("api/data_pengeluaran.php")
 
 console.log(result);
 
-// struktur BPS
 let raw=result.data[1];
 
 let labels=[];
 let values=[];
 
-
-// ambil 10 teratas
 for(let i=0;i<10;i++){
 
 labels.push(
@@ -395,10 +416,10 @@ parseFloat(raw[i].value)
 }
 
 
-// statistik kartu
+// statistik
 document.getElementById(
 "totalKuliner"
-).innerText=10;
+).innerText="10";
 
 document.getElementById(
 "murah"
@@ -444,9 +465,11 @@ beginAtZero:true
 
 }
 
-});
+}
+);
 
 })
+
 .catch(err=>{
 console.error(err);
 alert("Gagal ambil data BPS");
