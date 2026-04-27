@@ -1,8 +1,7 @@
 <?php
-header('Content-Type: application/json');
 include "koneksi.php";
 
-$data = mysqli_query($conn,"SELECT * FROM kuliner");
+$data = mysqli_query($conn,"SELECT * FROM kuliner WHERE status='approved'");
 
 $result = [];
 
