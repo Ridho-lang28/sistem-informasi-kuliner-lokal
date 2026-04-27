@@ -45,9 +45,16 @@ function renderMenu(){
     <li><a class="dropdown-item" onclick="showPage('tambah')">Tambah Kuliner</a></li>
   `;
 
-  if(role === "admin"){
+  // dashboard untuk semua user yang login
+  if(role){
     html += `
       <li><a class="dropdown-item" onclick="showPage('dashboard')">Dashboard</a></li>
+    `;
+  }
+  
+  // admin only
+  if(role === "admin"){
+    html += `
       <li><a class="dropdown-item" onclick="showPage('admin')">Panel Admin</a></li>
     `;
   }
