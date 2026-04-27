@@ -393,45 +393,54 @@ loadAdmin();
 function loadChart(){
 
 fetch("api/data_pengeluaran.php")
-.then(r=>r.json())
+.then(res=>res.json())
 .then(result=>{
 
-console.log(result);
+console.log(result); // cek struktur di console
 
-let raw=result.data[1];
+// ambil data BPS (lebih fleksibel)
+let raw =
+result.data?.[1] ||
+result.data?.[0] ||
+result.data ||
+[];
+
+if(raw.length===0){
+alert("Data BPS kosong");
+return;
+}
 
 let labels=[];
 let values=[];
 
-for(let i=0;i<10;i++){
+
+// ambil 10 data pertama
+raw.slice(0,10).forEach(item=>{
 
 labels.push(
-raw[i].label
+item.label ||
+item.nama ||
+item.wilayah
 );
 
 values.push(
-parseFloat(raw[i].value)
+parseFloat(
+item.value ||
+item.jumlah ||
+0
+)
 );
 
-}
+});
 
 
-// statistik
-document.getElementById(
-"totalKuliner"
-).innerText="10";
-
-document.getElementById(
-"murah"
-).innerText="BPS";
-
-document.getElementById(
-"mahal"
-).innerText="API";
+// isi kartu statistik
+document.getElementById("totalKuliner").innerText=labels.length;
+document.getElementById("murah").innerText="BPS";
+document.getElementById("mahal").innerText="API";
 
 
-
-// chart
+// bikin chart
 new Chart(
 document.getElementById("chart"),
 {
@@ -439,7 +448,6 @@ type:"bar",
 
 data:{
 labels:labels,
-
 datasets:[
 {
 label:"Pengeluaran",
@@ -449,20 +457,18 @@ data:values
 },
 
 options:{
+indexAxis:"y",
 responsive:true,
-
 plugins:{
 legend:{
-display:true
+display:false
 }
 },
-
 scales:{
-y:{
+x:{
 beginAtZero:true
 }
 }
-
 }
 
 }
