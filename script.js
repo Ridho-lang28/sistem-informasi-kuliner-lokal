@@ -390,77 +390,70 @@ loadAdmin();
 
 
 // ================= DASHBOARD BPS =================
-// ================= DASHBOARD BPS =================
 function loadChart(){
 
 fetch("api/data_pengeluaran.php")
 .then(res=>res.json())
-.then(result=>{
-
-console.log(result);
-
-// ambil nama daerah dari vervar
-let daerah = result.vervar || [];
-
-// kalau data angka ada di datacontent
-let isi = result.datacontent || [];
-
+.then(res=>{
 
 let labels=[];
 let values=[];
 
+let data=res.datacontent;
+let wilayah=res.vervar;
 
-// ambil 10 teratas seperti dashboard lama
-for(let i=0;i<10;i++){
-
-if(daerah[i]){
-labels.push(
-daerah[i].label.replace(/<[^>]*>/g,"")
-);
+if(!data || !wilayah){
+alert("Data BPS kosong");
+return;
 }
 
-// jika datacontent ada
-if(isi[i]){
+
+let entries=Object.entries(data);
+
+// urut terbesar
+entries.sort(
+(a,b)=>b[1]-a[1]
+);
+
+// ambil top10
+entries=entries.slice(0,10).reverse();
+
+entries.forEach(([key,value])=>{
+
+let namaWilayah=key;
+
+wilayah.forEach(w=>{
+if(key.includes(w.val)){
+namaWilayah=
+w.label.replace(/<[^>]*>/g,"");
+}
+});
+
+labels.push(namaWilayah);
 values.push(
-parseFloat(isi[i].value || isi[i].val || 0)
-);
-}else{
-
-// dummy biar tetap tampil kalau API kosong
-values.push(
-Math.floor(
-Math.random()*500+500
-)
+parseFloat(value)
 );
 
-}
-
-}
+});
 
 
-// ===== kartu statistik seperti dashboard lama =====
-document.getElementById(
-"totalKuliner"
-).innerText=labels.length;
+// isi kartu statistik
+document.getElementById("totalKuliner").innerText=
+labels.length;
 
-document.getElementById(
-"murah"
-).innerText=
-Math.min(...values);
+document.getElementById("murah").innerText=
+Math.min(...values).toLocaleString();
 
-document.getElementById(
-"mahal"
-).innerText=
-Math.max(...values);
+document.getElementById("mahal").innerText=
+Math.max(...values).toLocaleString();
 
 
-// hapus chart lama kalau reload
+
 if(window.myChart){
 window.myChart.destroy();
 }
 
 
-// ===== chart lama style =====
 window.myChart=
 new Chart(
 document.getElementById("chart"),
@@ -469,39 +462,52 @@ type:"bar",
 
 data:{
 labels:labels,
-
-datasets:[
-{
+datasets:[{
 label:"Pengeluaran per Kapita",
 data:values,
-borderWidth:1
-}
-]
+borderRadius:8,
+barThickness:18
+}]
 },
 
 options:{
+indexAxis:"y",
 responsive:true,
+maintainAspectRatio:false,
 
 plugins:{
 legend:{
-display:true
+display:false
+},
+
+tooltip:{
+callbacks:{
+label:function(ctx){
+return "Rp "+
+ctx.raw.toLocaleString();
+}
+}
 }
 },
 
 scales:{
-y:{
-beginAtZero:true
+x:{
+ticks:{
+callback:function(value){
+return "Rp "+
+value.toLocaleString();
+}
+}
 }
 }
 }
 
-});
+);
 
 })
-
 .catch(err=>{
 console.error(err);
-alert("Data BPS gagal dimuat");
+alert("Gagal ambil data API");
 });
 
 }
