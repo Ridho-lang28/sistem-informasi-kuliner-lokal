@@ -1,270 +1,355 @@
 // ================= LOAD =================
 document.addEventListener("DOMContentLoaded", function(){
-  console.log("App Ready");
-  renderMenu();
+console.log("App Ready");
+renderMenu();
 
-  const page = getPageFromURL();
-  showPage(page);
+const page=getPageFromURL();
+showPage(page);
 });
 
 // ================= URL =================
 function getPageFromURL(){
-  const params = new URLSearchParams(window.location.search);
-  return params.get("page") || "home";
+const params=new URLSearchParams(window.location.search);
+return params.get("page") || "home";
 }
 
 // ================= AUTH =================
 function isLogin(){
-  return localStorage.getItem("user") !== null;
+return localStorage.getItem("user")!==null;
 }
 
 function getUser(){
-  return JSON.parse(localStorage.getItem("user"));
+return JSON.parse(localStorage.getItem("user"));
 }
 
 function getRole(){
-  let user = getUser();
-  return user ? user.role : null;
+let user=getUser();
+return user ? user.role : null;
 }
 
 function logout(){
-  localStorage.removeItem("user");
-  alert("Logout berhasil");
-  renderMenu();
-  showPage("home");
+localStorage.removeItem("user");
+alert("Logout berhasil");
+renderMenu();
+showPage("home");
 }
 
 // ================= MENU =================
 function renderMenu(){
-  let role = getRole();
-  let menu = document.getElementById("menuList");
 
-  let html = `
-    <li><a class="dropdown-item" onclick="showPage('home')">Beranda</a></li>
-    <li><a class="dropdown-item" onclick="showPage('daftar')">Kuliner</a></li>
-    <li><a class="dropdown-item" onclick="showPage('tambah')">Tambah Kuliner</a></li>
-  `;
+let role=getRole();
+let menu=document.getElementById("menuList");
 
-  // dashboard untuk semua user yang login
-  if(role){
-    html += `
-      <li><a class="dropdown-item" onclick="showPage('dashboard')">Dashboard</a></li>
-    `;
-  }
-  
-  // admin only
-  if(role === "admin"){
-    html += `
-      <li><a class="dropdown-item" onclick="showPage('admin')">Panel Admin</a></li>
-    `;
-  }
+let html=`
+<li><a class="dropdown-item" onclick="showPage('home')">Beranda</a></li>
+<li><a class="dropdown-item" onclick="showPage('daftar')">Kuliner</a></li>
+<li><a class="dropdown-item" onclick="showPage('tambah')">Tambah Kuliner</a></li>
+`;
 
-  if(isLogin()){
-    html += `<li><a class="dropdown-item text-danger" onclick="logout()">Logout</a></li>`;
-  } else {
-    html += `
-      <li><a class="dropdown-item" onclick="showPage('login')">Login</a></li>
-      <li><a class="dropdown-item" onclick="showPage('register')">Daftar</a></li>
-    `;
-  }
+if(role){
+html+=`
+<li><a class="dropdown-item" onclick="showPage('dashboard')">
+Dashboard
+</a></li>
+`;
+}
 
-  menu.innerHTML = html;
+if(role==="admin"){
+html+=`
+<li><a class="dropdown-item"
+onclick="showPage('admin')">
+Panel Admin
+</a></li>
+`;
+}
+
+if(isLogin()){
+html+=`
+<li>
+<a class="dropdown-item text-danger"
+onclick="logout()">
+Logout
+</a>
+</li>
+`;
+}else{
+html+=`
+<li><a class="dropdown-item"
+onclick="showPage('login')">Login</a></li>
+
+<li><a class="dropdown-item"
+onclick="showPage('register')">Daftar</a></li>
+`;
+}
+
+menu.innerHTML=html;
+
 }
 
 // ================= LOGIN =================
 function login(){
-  let formData = new FormData();
-  formData.append("email", document.getElementById("email").value);
-  formData.append("password", document.getElementById("password").value);
 
-  fetch("api/login.php", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(res => {
-    if(res.status === "success"){
-      localStorage.setItem("user", JSON.stringify(res));
-      alert("Login berhasil");
-      renderMenu();
-      showPage("home");
-    } else {
-      alert("Login gagal");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("❌ Error login");
-  });
+let formData=new FormData();
+formData.append("email",email.value);
+formData.append("password",password.value);
+
+fetch("api/login.php",{
+method:"POST",
+body:formData
+})
+.then(r=>r.json())
+.then(res=>{
+
+if(res.status==="success"){
+localStorage.setItem("user",JSON.stringify(res));
+alert("Login berhasil");
+renderMenu();
+showPage("home");
+}
+else{
+alert("Login gagal");
+}
+
+});
+
 }
 
 // ================= REGISTER =================
 function register(){
-  let formData = new FormData();
-  formData.append("email", document.getElementById("email").value);
-  formData.append("password", document.getElementById("password").value);
 
-  fetch("api/register.php", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(res => {
-    if(res.status === "success"){
-      alert("Berhasil daftar");
-      showPage("login");
-    } else {
-      alert(res.msg);
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("❌ Error register");
-  });
+let formData=new FormData();
+
+formData.append("email",email.value);
+formData.append("password",password.value);
+
+fetch("api/register.php",{
+method:"POST",
+body:formData
+})
+.then(r=>r.json())
+.then(res=>{
+
+if(res.status==="success"){
+alert("Berhasil daftar");
+showPage("login");
+}
+else{
+alert(res.msg);
+}
+
+});
+
 }
 
 // ================= FORM TAMBAH =================
 function attachForm(){
-  let form = document.getElementById("formKuliner");
 
-  if(!form) return;
+let form=document.getElementById("formKuliner");
 
-  if(!isLogin()){
-    alert("Harus login dulu!");
-    showPage("login");
-    return;
-  }
+if(!form) return;
 
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
-
-    let formData = new FormData();
-    formData.append("nama_makanan", document.getElementById("nama_makanan").value);
-    formData.append("kategori", document.getElementById("kategori").value);
-    formData.append("lokasi", document.getElementById("lokasi").value);
-    formData.append("harga", document.getElementById("harga").value);
-    formData.append("deskripsi", document.getElementById("deskripsi").value);
-    formData.append("rating", document.getElementById("rating").value);
-
-    fetch("api/simpan_kuliner.php", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.text())
-    .then(() => {
-      alert("✅ Data masuk (menunggu approval admin)");
-      showPage("home");
-    })
-    .catch(err => {
-      console.error(err);
-      alert("❌ Gagal simpan data");
-    });
-  });
+if(!isLogin()){
+alert("Login dulu");
+showPage("login");
+return;
 }
 
-// ================= LOAD DATA =================
+form.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let fd=new FormData();
+
+fd.append("nama_makanan",nama_makanan.value);
+fd.append("kategori",kategori.value);
+fd.append("lokasi",lokasi.value);
+fd.append("harga",harga.value);
+fd.append("deskripsi",deskripsi.value);
+fd.append("rating",rating.value);
+
+fetch("api/simpan_kuliner.php",{
+method:"POST",
+body:fd
+})
+.then(()=>{
+
+alert("Menunggu approval admin");
+showPage("home");
+
+});
+
+});
+
+}
+
+// ================= LOAD KULINER =================
 function loadKuliner(){
-  let container = document.getElementById("kulinerContainer");
-  if(!container) return;
 
-  container.innerHTML = "<p>Loading...</p>";
+let box=document.getElementById("kulinerContainer");
 
-  fetch("api/ambil_kuliner.php")
-  .then(res => res.json())
-  .then(data => {
+if(!box) return;
 
-    container.innerHTML = "";
+box.innerHTML="Loading...";
 
-    if(data.length === 0){
-      container.innerHTML = "<p>Tidak ada data</p>";
-      return;
-    }
+fetch("api/ambil_kuliner.php")
+.then(r=>r.json())
+.then(data=>{
 
-    data.forEach(k => {
-      container.innerHTML += `
-        <div class="col-md-4 mb-3">
-          <div class="card p-3 shadow-sm">
-            <h5>${k.nama_makanan}</h5>
-            <p>${k.kategori} - ${k.lokasi}</p>
-            <p>Rp ${k.harga}</p>
-            <p>${k.deskripsi}</p>
-            <p>⭐ ${k.rating}</p>
-          </div>
-        </div>
-      `;
-    });
+box.innerHTML="";
 
-  })
-  .catch(() => {
-    container.innerHTML = "<p>❌ Gagal load</p>";
-  });
+if(data.length===0){
+box.innerHTML="Tidak ada data";
+return;
+}
+
+data.forEach(k=>{
+
+box.innerHTML+=`
+<div class="col-md-4 mb-3">
+<div class="card shadow p-3">
+<h5>${k.nama_makanan}</h5>
+
+<p>${k.kategori}</p>
+
+<p>${k.lokasi}</p>
+
+<p>Rp ${parseInt(k.harga).toLocaleString("id-ID")}</p>
+
+<p>⭐ ${k.rating}</p>
+
+</div>
+</div>
+`;
+
+});
+
+});
+
 }
 
 // ================= ADMIN =================
 function loadAdmin(){
-  fetch("api/ambil_pending.php")
-  .then(res => res.json())
-  .then(data => {
 
-    let html = "";
+fetch("api/ambil_pending.php")
+.then(r=>r.json())
+.then(data=>{
 
-    if(data.length === 0){
-      html = "<p>Tidak ada data pending</p>";
-    }
+let html="";
 
-    data.forEach(k => {
-      html += `
-        <div class="border p-2 mb-2 rounded">
-          <b>${k.nama_makanan}</b><br>
-          ${k.kategori} - ${k.lokasi}
+if(data.length===0){
+html="Tidak ada data pending";
+}
 
-          <div class="mt-2">
-            <button class="btn btn-success btn-sm" onclick="approve(${k.id})">Approve</button>
-            <button class="btn btn-danger btn-sm" onclick="reject(${k.id})">Reject</button>
-          </div>
-        </div>
-      `;
-    });
+data.forEach(k=>{
 
-    document.getElementById("adminList").innerHTML = html;
-  });
+html+=`
+<div class="card p-3 mb-3">
+
+<h5>${k.nama_makanan}</h5>
+
+<p>${k.kategori}</p>
+
+<div class="mt-2">
+
+<button
+class="btn btn-success btn-sm"
+onclick="approve(${k.id})">
+Approve
+</button>
+
+<button
+class="btn btn-danger btn-sm"
+onclick="reject(${k.id})">
+Reject
+</button>
+
+</div>
+
+</div>
+`;
+
+});
+
+document.getElementById("adminList").innerHTML=html;
+
+});
+
 }
 
 function approve(id){
-  fetch("api/approve.php?id=" + id)
-  .then(() => {
-    alert("Approved!");
-    loadAdmin();
-  });
+fetch("api/approve.php?id="+id)
+.then(()=>{
+alert("Approved");
+loadAdmin();
+});
 }
 
 function reject(id){
-  fetch("api/reject.php?id=" + id)
-  .then(() => {
-    alert("Rejected!");
-    loadAdmin();
-  });
+fetch("api/reject.php?id="+id)
+.then(()=>{
+alert("Rejected");
+loadAdmin();
+});
 }
+
 
 // ================= DASHBOARD =================
 function loadChart(){
-  fetch("api/ambil_kuliner.php")
-  .then(res => res.json())
-  .then(data => {
 
-    let labels = data.map(k => k.nama_makanan);
-    let harga = data.map(k => parseInt(k.harga));
+fetch("api/ambil_kuliner.php")
+.then(r=>r.json())
+.then(data=>{
 
-    new Chart(document.getElementById("chart"), {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Harga Kuliner',
-          data: harga
-        }]
-      }
-    });
+let labels=data.map(k=>k.nama_makanan);
+let harga=data.map(k=>parseInt(k.harga));
 
-  });
+
+// kartu statistik
+document.getElementById("totalKuliner").innerText=
+data.length;
+
+document.getElementById("murah").innerText=
+data.filter(k=>parseInt(k.harga)<20000).length;
+
+document.getElementById("mahal").innerText=
+data.filter(k=>parseInt(k.harga)>=20000).length;
+
+
+// chart
+new Chart(
+document.getElementById("chart"),
+{
+type:"bar",
+
+data:{
+labels:labels,
+
+datasets:[{
+label:"Harga Kuliner",
+data:harga
+}]
+},
+
+options:{
+indexAxis:"y",
+
+plugins:{
+legend:{
+display:false
+},
+tooltip:{
+callbacks:{
+label:function(context){
+return "Rp "+
+context.raw.toLocaleString("id-ID");
+}
+}
+}
+}
+}
+
+});
+
+});
+
 }
