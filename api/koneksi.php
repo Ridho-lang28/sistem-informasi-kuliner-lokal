@@ -1,19 +1,16 @@
 <?php
 $host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
-$user = "3KTgRBgr6VCylbp.root";
+$user = "3KTgRBgr6VCy1bp.root"; // pastikan ini PERSIS dari TiDB
 $pass = "vRQ5NOTe19BUt5vk";
 $db   = "KulinerLokal";
 $port = 4000;
 
 $conn = mysqli_init();
 
-// WAJIB: disable SSL verify (biar jalan di Vercel)
+// WAJIB untuk TiDB
 mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
-
-// WAJIB: aktifkan SSL
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 
-// connect
 mysqli_real_connect(
     $conn,
     $host,
@@ -25,11 +22,9 @@ mysqli_real_connect(
     MYSQLI_CLIENT_SSL
 );
 
-// cek error
 if (mysqli_connect_errno()) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+    die("ERROR: " . mysqli_connect_error());
 }
 
-// charset
-mysqli_set_charset($conn, "utf8");
+echo "SUCCESS CONNECT";
 ?>
