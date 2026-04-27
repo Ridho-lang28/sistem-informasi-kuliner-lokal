@@ -32,10 +32,8 @@ toast.remove();
 
 // ================= LOAD =================
 document.addEventListener("DOMContentLoaded",function(){
-
 renderMenu();
 showPage(getPageFromURL());
-
 });
 
 
@@ -54,9 +52,7 @@ return localStorage.getItem("user")!==null;
 }
 
 function getUser(){
-return JSON.parse(
-localStorage.getItem("user")
-);
+return JSON.parse(localStorage.getItem("user"));
 }
 
 function getRole(){
@@ -65,14 +61,12 @@ return user ? user.role : null;
 }
 
 function logout(){
-
 localStorage.removeItem("user");
 
 notif("👋 Logout berhasil","warning");
 
 renderMenu();
 showPage("home");
-
 }
 
 
@@ -81,29 +75,15 @@ showPage("home");
 function renderMenu(){
 
 let role=getRole();
-
-let menu=
-document.getElementById("menuList");
+let menu=document.getElementById("menuList");
 
 let html=`
-<li><a class="dropdown-item"
-onclick="showPage('home')">
-Beranda
-</a></li>
-
-<li><a class="dropdown-item"
-onclick="showPage('daftar')">
-Kuliner
-</a></li>
-
-<li><a class="dropdown-item"
-onclick="showPage('tambah')">
-Tambah Kuliner
-</a></li>
+<li><a class="dropdown-item" onclick="showPage('home')">Beranda</a></li>
+<li><a class="dropdown-item" onclick="showPage('daftar')">Kuliner</a></li>
+<li><a class="dropdown-item" onclick="showPage('tambah')">Tambah Kuliner</a></li>
 `;
 
 if(role){
-
 html+=`
 <li>
 <a class="dropdown-item"
@@ -112,11 +92,9 @@ Dashboard
 </a>
 </li>
 `;
-
 }
 
 if(role==="admin"){
-
 html+=`
 <li>
 <a class="dropdown-item"
@@ -125,7 +103,6 @@ Panel Admin
 </a>
 </li>
 `;
-
 }
 
 if(isLogin()){
@@ -156,7 +133,6 @@ Daftar
 </a>
 </li>
 `;
-
 }
 
 menu.innerHTML=html;
@@ -202,16 +178,15 @@ setTimeout(()=>{
 showPage("home");
 },1000);
 
-}
-else{
+}else{
 
-notif(
-"❌ Login gagal",
-"danger"
-);
+notif("❌ Login gagal","danger");
 
 }
 
+})
+.catch(()=>{
+notif("Server error","danger");
 });
 
 }
@@ -249,11 +224,12 @@ showPage("login");
 },1000);
 
 }else{
-
 notif(res.msg,"danger");
-
 }
 
+})
+.catch(()=>{
+notif("Server error","danger");
 });
 
 }
@@ -295,19 +271,16 @@ document.getElementById(id).value
 );
 });
 
-
 fetch("api/simpan_kuliner.php",{
 method:"POST",
 body:fd
 })
 .then(()=>{
-
-notif(
-"⏳ Menunggu approval admin"
-);
-
+notif("⏳ Menunggu approval admin");
 showPage("home");
-
+})
+.catch(()=>{
+notif("Gagal simpan","danger");
 });
 
 });
@@ -329,9 +302,7 @@ if(!box) return;
 box.innerHTML=`
 <div class='text-center mt-5'>
 <div class='spinner-border text-warning'></div>
-<p class='mt-3'>
-Memuat data...
-</p>
+<p class='mt-3'>Memuat data...</p>
 </div>
 `;
 
@@ -342,8 +313,7 @@ fetch("api/ambil_kuliner.php")
 box.innerHTML="";
 
 if(data.length===0){
-box.innerHTML=
-"Tidak ada data";
+box.innerHTML="Tidak ada data";
 return;
 }
 
@@ -351,12 +321,9 @@ data.forEach(k=>{
 
 box.innerHTML+=`
 <div class="col-md-4 mb-3">
-
 <div class="card p-3">
 
-<h5>
-${k.nama_makanan}
-</h5>
+<h5>${k.nama_makanan}</h5>
 
 <p>${k.kategori}</p>
 
@@ -368,17 +335,25 @@ k.harga
 ).toLocaleString("id-ID")}
 </p>
 
-<p>
-⭐ ${k.rating}
-</p>
+<p>⭐ ${k.rating}</p>
+
+${getRole()==="admin" ? `
+<button
+class="btn btn-danger w-100 mt-2"
+onclick="hapusKuliner(${k.id})">
+🗑 Hapus
+</button>
+` : ""}
 
 </div>
-
 </div>
 `;
 
 });
 
+})
+.catch(()=>{
+box.innerHTML="Gagal memuat data";
 });
 
 }
@@ -394,18 +369,18 @@ fetch("api/ambil_pending.php")
 
 let html="";
 
+if(data.length===0){
+html="Tidak ada data pending";
+}
+
 data.forEach(k=>{
 
 html+=`
 <div class="card p-3 mb-3">
 
-<h5>
-${k.nama_makanan}
-</h5>
+<h5>${k.nama_makanan}</h5>
 
-<p>
-${k.kategori}
-</p>
+<p>${k.kategori}</p>
 
 <button
 class="btn btn-success btn-sm"
@@ -426,12 +401,16 @@ Reject
 
 document.getElementById(
 "adminList"
-).innerHTML=
-html || "Tidak ada data";
+).innerHTML=html;
 
+})
+.catch(()=>{
+notif("Gagal load admin","danger");
 });
 
 }
+
+
 
 function approve(id){
 
@@ -444,6 +423,8 @@ loadAdmin();
 });
 
 }
+
+
 
 function reject(id){
 
@@ -498,17 +479,12 @@ labels.length;
 document.getElementById(
 "murah"
 ).innerText=
-Math.min(
-...values
-).toLocaleString();
+Math.min(...values).toLocaleString();
 
 document.getElementById(
 "mahal"
 ).innerText=
-Math.max(
-...values
-).toLocaleString();
-
+Math.max(...values).toLocaleString();
 
 
 if(window.myChart){
@@ -516,12 +492,9 @@ window.myChart.destroy();
 }
 
 
-
 window.myChart=
 new Chart(
-document.getElementById(
-"chart"
-),
+document.getElementById("chart"),
 {
 type:"bar",
 
@@ -565,6 +538,35 @@ display:false
 
 });
 
+})
+.catch(err=>{
+console.error(err);
+notif("Gagal ambil data","danger");
+});
+
+}
+
+
+
+// ================= HAPUS =================
+function hapusKuliner(id){
+
+if(!confirm("Hapus data kuliner ini?")){
+return;
+}
+
+fetch(
+"api/hapus_kuliner.php?id="+id
+)
+.then(()=>{
+notif(
+"🗑 Data berhasil dihapus",
+"danger"
+);
+loadKuliner();
+})
+.catch(()=>{
+notif("Gagal hapus","danger");
 });
 
 }
