@@ -22,8 +22,7 @@
         ⋮
       </button>
 
-      <ul class="dropdown-menu dropdown-menu-end" id="menuList">
-      </ul>
+      <ul class="dropdown-menu dropdown-menu-end" id="menuList"></ul>
     </div>
 
   </div>
@@ -35,51 +34,6 @@
 <script src="script.js"></script>
 
 <script>
-
-// ================= ROLE =================
-function setRole(role){
-  localStorage.setItem("role", role);
-}
-
-function getRole(){
-  return localStorage.getItem("role");
-}
-
-function logout(){
-  localStorage.removeItem("role");
-  renderMenu();
-  showPage("home");
-}
-
-// ================= MENU =================
-function renderMenu(){
-  let role = getRole();
-  let menu = document.getElementById("menuList");
-
-  let html = `
-    <li><a class="dropdown-item" onclick="showPage('home')">Beranda</a></li>
-    <li><a class="dropdown-item" onclick="showPage('daftar')">Kuliner</a></li>
-    <li><a class="dropdown-item" onclick="showPage('tambah')">Tambah Kuliner</a></li>
-  `;
-
-  if(role === "admin"){
-    html += `
-      <li><a class="dropdown-item" onclick="showPage('dashboard')">Dashboard</a></li>
-      <li><a class="dropdown-item" onclick="showPage('admin')">Panel Admin</a></li>
-    `;
-  }
-
-  if(role){
-    html += `<li><a class="dropdown-item text-danger" onclick="logout()">Logout</a></li>`;
-  } else {
-    html += `
-      <li><a class="dropdown-item" onclick="showPage('login')">Login</a></li>
-      <li><a class="dropdown-item" onclick="showPage('register')">Daftar</a></li>
-    `;
-  }
-
-  menu.innerHTML = html;
-}
 
 // ================= PAGE =================
 function showPage(page){
@@ -152,6 +106,7 @@ function showPage(page){
   // ================= ADMIN =================
   else if(page === "admin"){
 
+    // pakai role dari backend (script.js)
     if(getRole() !== "admin"){
       alert("Akses ditolak!");
       showPage("home");
@@ -161,31 +116,17 @@ function showPage(page){
     content.innerHTML = `
       <div class="card p-4">
         <h3>🛠 Panel Admin</h3>
-        <p>Di sini nanti approve / reject data kuliner</p>
+        <div id="adminList"></div>
       </div>
     `;
+
+    loadAdmin(); // penting
   }
-}
-
-// ================= SIMULASI LOGIN =================
-function login(){
-  let email = document.getElementById("email").value;
-
-  if(email === "admin@gmail.com"){
-    setRole("admin");
-    alert("Login sebagai Admin");
-  } else {
-    setRole("user");
-    alert("Login sebagai User");
-  }
-
-  renderMenu();
-  showPage("home");
 }
 
 // ================= LOAD =================
 document.addEventListener("DOMContentLoaded", function(){
-  renderMenu();
+  renderMenu();   // dari script.js
   showPage("home");
 });
 
