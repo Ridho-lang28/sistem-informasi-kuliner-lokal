@@ -1,6 +1,6 @@
 <?php
 $host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
-$user = "3KTgRBgr6VCy1bp.root"; // pastikan ini PERSIS dari TiDB
+$user = "3KTgRBgr6VCy1bp.root";
 $pass = "vRQ5NOTe19BUt5vk";
 $db   = "kuliner_app";
 $port = 4000;
@@ -26,5 +26,5 @@ if (mysqli_connect_errno()) {
     die("ERROR: " . mysqli_connect_error());
 }
 
-echo "SUCCESS CONNECT";
+// ❌ JANGAN ADA ECHO DI SINI
 ?>
