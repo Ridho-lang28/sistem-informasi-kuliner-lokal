@@ -245,59 +245,56 @@ return;
 
 content.innerHTML=`
 
-<h2 class="mb-4 fw-bold">
-📊 Dashboard Statistik Kuliner
-</h2>
+<div class="container mt-4">
+
+<h3 class="mb-1">
+📊 Dashboard Statistik Kuliner (Data BPS)
+</h3>
+
+<p class="text-muted mb-4">
+Grafik ini menampilkan
+<b>Top 10 daerah dengan pengeluaran per kapita tertinggi</b>
+di Indonesia.
+</p>
 
 
 <div class="row mb-4">
 
-
 <div class="col-md-4">
-<div class="card text-center p-4">
-<h5>🍽 Total Kuliner</h5>
+<div class="card shadow text-center p-4">
+<h5>Total Data</h5>
 <h2 id="totalKuliner">0</h2>
 </div>
 </div>
 
-
 <div class="col-md-4">
-<div class="card text-center p-4">
-<h5>💸 Kuliner Murah</h5>
+<div class="card shadow text-center p-4">
+<h5>Terendah</h5>
 <h2 id="murah">0</h2>
-<small>&lt; 20rb</small>
 </div>
 </div>
-
 
 <div class="col-md-4">
-<div class="card text-center p-4">
-<h5>💎 Kuliner Mahal</h5>
+<div class="card shadow text-center p-4">
+<h5>Tertinggi</h5>
 <h2 id="mahal">0</h2>
-<small>&gt;=20rb</small>
 </div>
 </div>
-
 
 </div>
 
 
+<div class="card shadow p-4" style="height:500px;">
 
-<div class="card p-4">
-
-<h4>
-Top 10 Daerah Pengeluaran Tertinggi
-</h4>
-
-<p class="text-muted">
-Data pengeluaran makanan dari API BPS
-</p>
+<div class="mb-3 text-end">
+<small class="text-muted">
+Sumber: BPS | Update otomatis dari API
+</small>
+</div>
 
 <canvas id="chart"></canvas>
 
-<small class="text-muted d-block mt-3 text-end">
-Sumber: BPS API
-</small>
+</div>
 
 </div>
 
@@ -306,8 +303,6 @@ Sumber: BPS API
 loadChart();
 
 }
-
-
 
 // ADMIN
 else if(page==="admin"){
