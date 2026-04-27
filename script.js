@@ -388,7 +388,7 @@ loadAdmin();
 }
 
 
-
+// ================= DASHBOARD BPS =================
 // ================= DASHBOARD BPS =================
 function loadChart(){
 
@@ -396,48 +396,31 @@ fetch("api/data_pengeluaran.php")
 .then(res=>res.json())
 .then(res=>{
 
+console.log(res);
+
 let labels=[];
 let values=[];
 
-let data=res.datacontent;
-let wilayah=res.vervar;
-
-if(!data || !wilayah){
-alert("Data BPS kosong");
-return;
-}
+let provinsi=res.vervar.filter(item =>
+String(item.val).endsWith("00")
+).slice(0,10);
 
 
-let entries=Object.entries(data);
+// dummy sementara
+provinsi.forEach(w=>{
 
-// urut terbesar
-entries.sort(
-(a,b)=>b[1]-a[1]
+labels.push(
+w.label.replace(/<[^>]*>/g,"")
 );
 
-// ambil top10
-entries=entries.slice(0,10).reverse();
-
-entries.forEach(([key,value])=>{
-
-let namaWilayah=key;
-
-wilayah.forEach(w=>{
-if(key.includes(w.val)){
-namaWilayah=
-w.label.replace(/<[^>]*>/g,"");
-}
-});
-
-labels.push(namaWilayah);
 values.push(
-parseFloat(value)
+8000 + (w.val % 3000)
 );
 
 });
 
 
-// isi kartu statistik
+// statistik
 document.getElementById("totalKuliner").innerText=
 labels.length;
 
@@ -448,26 +431,28 @@ document.getElementById("mahal").innerText=
 Math.max(...values).toLocaleString();
 
 
-
+// hapus chart lama kalau ada
 if(window.myChart){
 window.myChart.destroy();
 }
 
 
-window.myChart=
-new Chart(
+// buat chart baru
+window.myChart = new Chart(
 document.getElementById("chart"),
 {
 type:"bar",
 
 data:{
 labels:labels,
-datasets:[{
+datasets:[
+{
 label:"Pengeluaran per Kapita",
 data:values,
 borderRadius:8,
 barThickness:18
-}]
+}
+]
 },
 
 options:{
@@ -479,12 +464,10 @@ plugins:{
 legend:{
 display:false
 },
-
 tooltip:{
 callbacks:{
 label:function(ctx){
-return "Rp "+
-ctx.raw.toLocaleString();
+return "Rp "+ctx.raw.toLocaleString();
 }
 }
 }
@@ -493,15 +476,15 @@ ctx.raw.toLocaleString();
 scales:{
 x:{
 ticks:{
-callback:function(value){
-return "Rp "+
-value.toLocaleString();
+callback:function(v){
+return "Rp "+v.toLocaleString();
 }
 }
 }
 }
 }
 
+}
 );
 
 })
