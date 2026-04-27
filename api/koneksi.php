@@ -7,7 +7,7 @@ $port = 4000;
 
 $conn = mysqli_init();
 
-// WAJIB untuk TiDB
+// SSL (wajib TiDB)
 mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 
@@ -22,9 +22,16 @@ mysqli_real_connect(
     MYSQLI_CLIENT_SSL
 );
 
+// cek koneksi
 if (mysqli_connect_errno()) {
-    die("ERROR: " . mysqli_connect_error());
+    die("Koneksi gagal: " . mysqli_connect_error());
 }
 
-// ❌ JANGAN ADA ECHO DI SINI
+// 🔥 PAKSA PILIH DATABASE (ini yang sering bikin error)
+mysqli_select_db($conn, $db);
+
+// debug (optional)
+if (!$conn) {
+    die("DB belum terhubung");
+}
 ?>
