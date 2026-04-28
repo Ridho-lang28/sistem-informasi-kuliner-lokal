@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
+<!-- ================= PENGATURAN DASAR HALAMAN ================= -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kuliner Lokal</title>
 
+<!-- ================= LIBRARY BOOTSTRAP & CHART ================= -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+/* ================= STYLE UTAMA WEBSITE ================= */
+
 body{
 background:#f5f6f8;
 font-family:Arial,sans-serif;
 }
 
+/* Navbar */
 .navbar{
 background:linear-gradient(45deg,#ff7f50,#ff9966);
 box-shadow:0 4px 12px rgba(0,0,0,.1);
@@ -24,6 +30,7 @@ font-weight:bold;
 font-size:22px;
 }
 
+/* Card umum */
 .card{
 border:none;
 border-radius:18px;
@@ -35,6 +42,7 @@ transition:.3s;
 transform:translateY(-5px);
 }
 
+/* Tombol */
 .btn{
 border-radius:12px;
 transition:.3s;
@@ -44,11 +52,13 @@ transition:.3s;
 transform:scale(1.03);
 }
 
+/* Input form */
 .form-control{
 border-radius:12px;
 padding:12px;
 }
 
+/* Hero beranda */
 .hero{
 background:white;
 padding:70px 30px;
@@ -66,10 +76,12 @@ font-size:20px;
 color:#666;
 }
 
+/* Kartu statistik dashboard */
 .stats-card h2{
 font-weight:bold;
 }
 
+/* Grafik */
 canvas{
 max-height:420px;
 }
@@ -79,7 +91,7 @@ max-height:420px;
 <body>
 
 
-<!-- NAVBAR -->
+<!-- ================= NAVBAR MENU ================= -->
 <nav class="navbar navbar-dark">
 <div class="container d-flex justify-content-between">
 
@@ -100,18 +112,20 @@ id="menuList">
 </ul>
 
 </div>
-
 </div>
 </nav>
 
 
 
-<!-- CONTENT -->
+<!-- ================= TEMPAT LOAD HALAMAN DINAMIS ================= -->
 <div class="container mt-5" id="content"></div>
 
 
 
 <script>
+
+/* ================= FUNGSI NAVIGASI HALAMAN ================= */
+/* Mengatur halaman mana yang tampil */
 function showPage(page){
 
 let content=
@@ -119,7 +133,7 @@ document.getElementById("content");
 
 
 
-// HOME
+/* ================= HALAMAN HOME ================= */
 if(page==="home"){
 
 content.innerHTML=`
@@ -150,7 +164,7 @@ Lihat Kuliner
 
 
 
-// LOGIN
+/* ================= HALAMAN LOGIN ================= */
 else if(page==="login"){
 
 content.innerHTML=`
@@ -186,7 +200,7 @@ Masuk
 
 
 
-// REGISTER
+/* ================= HALAMAN REGISTER ================= */
 else if(page==="register"){
 
 content.innerHTML=`
@@ -222,7 +236,7 @@ Daftar
 
 
 
-// TAMBAH
+/* ================= HALAMAN TAMBAH KULINER ================= */
 else if(page==="tambah"){
 
 content.innerHTML=`
@@ -235,25 +249,10 @@ content.innerHTML=`
 
 <form id="formKuliner">
 
-<input
-id="nama_makanan"
-class="form-control mb-3"
-placeholder="Nama makanan">
-
-<input
-id="kategori"
-class="form-control mb-3"
-placeholder="Kategori">
-
-<input
-id="lokasi"
-class="form-control mb-3"
-placeholder="Lokasi">
-
-<input
-id="harga"
-class="form-control mb-3"
-placeholder="Harga">
+<input id="nama_makanan" class="form-control mb-3" placeholder="Nama makanan">
+<input id="kategori" class="form-control mb-3" placeholder="Kategori">
+<input id="lokasi" class="form-control mb-3" placeholder="Lokasi">
+<input id="harga" class="form-control mb-3" placeholder="Harga">
 
 <textarea
 id="deskripsi"
@@ -261,13 +260,9 @@ class="form-control mb-3"
 placeholder="Deskripsi">
 </textarea>
 
-<input
-id="rating"
-class="form-control mb-4"
-placeholder="Rating">
+<input id="rating" class="form-control mb-4" placeholder="Rating">
 
-<button
-class="btn btn-success w-100">
+<button class="btn btn-success w-100">
 Simpan
 </button>
 
@@ -283,7 +278,7 @@ attachForm();
 
 
 
-// DAFTAR
+/* ================= HALAMAN DAFTAR KULINER ================= */
 else if(page==="daftar"){
 
 content.innerHTML=`
@@ -303,7 +298,7 @@ loadKuliner();
 
 
 
-// DASHBOARD
+/* ================= HALAMAN DASHBOARD ================= */
 else if(page==="dashboard"){
 
 if(!isLogin()){
@@ -323,42 +318,30 @@ content.innerHTML=`
 Top 10 pengeluaran per kapita tertinggi
 </p>
 
-
-
 <div class="row mb-4">
 
 <div class="col-md-4">
 <div class="card stats-card text-center p-4">
 <h5>Total Data</h5>
-<h2 id="totalKuliner">
-0
-</h2>
+<h2 id="totalKuliner">0</h2>
 </div>
 </div>
-
 
 <div class="col-md-4">
 <div class="card stats-card text-center p-4">
 <h5>Terendah</h5>
-<h2 id="murah">
-0
-</h2>
+<h2 id="murah">0</h2>
 </div>
 </div>
-
 
 <div class="col-md-4">
 <div class="card stats-card text-center p-4">
 <h5>Tertinggi</h5>
-<h2 id="mahal">
-0
-</h2>
+<h2 id="mahal">0</h2>
 </div>
 </div>
 
 </div>
-
-
 
 <div class="card p-4">
 
@@ -383,7 +366,7 @@ loadChart();
 
 
 
-// ADMIN
+/* ================= HALAMAN ADMIN ================= */
 else if(page==="admin"){
 
 if(getRole()!=="admin"){
@@ -418,8 +401,10 @@ loadAdmin();
 
 
 
+<!-- ================= FILE JAVASCRIPT UTAMA ================= -->
 <script src="script.js"></script>
 
+<!-- ================= BOOTSTRAP JAVASCRIPT ================= -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
