@@ -1,4 +1,5 @@
-// ================= TOAST =================
+// ================= TOAST / NOTIFIKASI =================
+// Menampilkan notifikasi popup kecil
 function notif(msg,type="success"){
 let toast=document.createElement("div");
 
@@ -30,7 +31,8 @@ toast.remove();
 
 
 
-// ================= LOAD =================
+// ================= LOAD / SAAT WEB DIBUKA =================
+// Menjalankan menu dan membuka halaman awal
 document.addEventListener("DOMContentLoaded",function(){
 renderMenu();
 showPage(getPageFromURL());
@@ -38,7 +40,8 @@ showPage(getPageFromURL());
 
 
 
-// ================= URL =================
+// ================= URL / AMBIL PAGE DARI URL =================
+// Mengambil parameter ?page=
 function getPageFromURL(){
 const params=new URLSearchParams(window.location.search);
 return params.get("page") || "home";
@@ -46,20 +49,24 @@ return params.get("page") || "home";
 
 
 
-// ================= AUTH =================
+// ================= AUTH / AUTENTIKASI =================
+// Cek user login
 function isLogin(){
 return localStorage.getItem("user")!==null;
 }
 
+// Ambil data user
 function getUser(){
 return JSON.parse(localStorage.getItem("user"));
 }
 
+// Ambil role user/admin
 function getRole(){
 let user=getUser();
 return user ? user.role : null;
 }
 
+// Logout
 function logout(){
 localStorage.removeItem("user");
 
@@ -71,7 +78,8 @@ showPage("home");
 
 
 
-// ================= MENU =================
+// ================= MENU NAVIGASI =================
+// Menampilkan menu sesuai role user
 function renderMenu(){
 
 let role=getRole();
@@ -141,7 +149,8 @@ menu.innerHTML=html;
 
 
 
-// ================= LOGIN =================
+// ================= LOGIN USER =================
+// Kirim email/password ke database lewat api/login.php
 function login(){
 
 let fd=new FormData();
@@ -193,7 +202,8 @@ notif("Server error","danger");
 
 
 
-// ================= REGISTER =================
+// ================= REGISTER USER =================
+// Kirim data pendaftaran ke database
 function register(){
 
 let fd=new FormData();
@@ -236,7 +246,8 @@ notif("Server error","danger");
 
 
 
-// ================= TAMBAH =================
+// ================= FORM TAMBAH KULINER =================
+// Menyimpan usulan kuliner baru
 function attachForm(){
 
 let form=
@@ -289,7 +300,8 @@ notif("Gagal simpan","danger");
 
 
 
-// ================= LOAD KULINER =================
+// ================= LOAD DATA KULINER =================
+// Mengambil data kuliner dari database
 function loadKuliner(){
 
 let box=
@@ -360,7 +372,8 @@ box.innerHTML="Gagal memuat data";
 
 
 
-// ================= ADMIN =================
+// ================= PANEL ADMIN =================
+// Menampilkan usulan pending untuk approve/reject
 function loadAdmin(){
 
 fetch("api/ambil_pending.php")
@@ -412,6 +425,8 @@ notif("Gagal load admin","danger");
 
 
 
+// ================= APPROVE DATA =================
+// Admin menyetujui data
 function approve(id){
 
 fetch(
@@ -426,6 +441,8 @@ loadAdmin();
 
 
 
+// ================= REJECT DATA =================
+// Admin menolak data
 function reject(id){
 
 fetch(
@@ -440,7 +457,8 @@ loadAdmin();
 
 
 
-// ================= DASHBOARD =================
+// ================= DASHBOARD / API BPS =================
+// Menampilkan grafik statistik dari API BPS
 function loadChart(){
 
 fetch("api/data_pengeluaran.php")
@@ -548,7 +566,8 @@ notif("Gagal ambil data","danger");
 
 
 
-// ================= HAPUS =================
+// ================= HAPUS KULINER =================
+// Admin menghapus data kuliner
 function hapusKuliner(id){
 
 notif("Klik hapus sekali lagi untuk konfirmasi","warning");
